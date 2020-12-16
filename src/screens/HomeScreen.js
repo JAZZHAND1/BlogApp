@@ -25,7 +25,8 @@ const HomeScreen = (props) => {
   const [input, setInput] = useState("");
   const [like,setlike] =useState(0);
   const [user,setuser] =useState([]);
- 
+  const[success,setsuccess] =useState(0);
+  const[postid,setpostid] =useState([]);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -76,9 +77,9 @@ const HomeScreen = (props) => {
             <Button
               title="Post"
               type="outline"
-              onPress={function () {
+              onPress={function (){
                 setLoading(true);
-                firebase
+                   firebase
                   .firestore()
                   .collection("posts")
                   .add({
@@ -87,21 +88,39 @@ const HomeScreen = (props) => {
                     author: auth.CurrentUser.displayName,
                     created_at: firebase.firestore.Timestamp.now(),
                     likes: 0,
+                    likers:[],
                     comments: [],
                   })
                   .then(() => {
                     setLoading(false);
                     alert("Post created Successfully!");
+                    setsuccess(1);
                   })
                   .catch((error) => {
                     setLoading(false);
                     alert(error);
                   });
-              }}
+                //  loadPosts();
+                //  console.log(posts[0].id);   
+                firebase.firestore().collection('posts')
+                .orderBy("created_at", "desc")
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                  let x = querySnapshot.docs[0].id;
+                  setpostid(x);
+                  alert(x);
+                });
+              
+          
+              }
+              
+            }
             />
+          
           </Card>
           <ActivityIndicator size="large" color="red" animating={loading} />
-
+           
           <FlatList
             data={posts}
             renderItem={({ item }) => {
@@ -114,6 +133,7 @@ const HomeScreen = (props) => {
                   id ={item.id}
                   f ={props.navigation} 
                   g= {auth.clickedpost}                     
+                
                 />
               );
             }}

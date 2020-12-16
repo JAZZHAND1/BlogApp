@@ -5,6 +5,7 @@ import { AntDesign } from "@expo/vector-icons";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import { AuthContext } from "../providers/AuthProvider";
+import { NavigationContainer } from "@react-navigation/native";
 
 
 const PostCard = (props) => {
@@ -47,6 +48,23 @@ const PostCard = (props) => {
               setlike(like+1);
              const db = firebase.firestore()
              db.collection("posts").doc(props.id).update({likes:like+1}).then(()=>{
+               
+            const db=  firebase
+              .firestore()
+              .collection("posts").doc(props.id);
+              let alllikers=[];
+            const doc =db.get().then((doc)=>{
+              let temp = doc.data().likers; 
+              temp.forEach(element => {
+                console.log(element);
+                alllikers.push(element);
+              });
+              console.log(alllikers);
+              alllikers.push(auth.CurrentUser.displayName); 
+            firebase.firestore().collection("posts").doc(props.id).update({likers:alllikers});
+            
+            })
+            
             
             }
             ).catch((error) =>{
@@ -58,13 +76,14 @@ const PostCard = (props) => {
           icon={<AntDesign name="like2" size={24} color="dodgerblue" />}
         />
         <Button type="solid" title="Comment" onPress ={function(){
-        //  console.log(props.id);
+          console.log(props.f);
            auth.setclickedpost(props.id);
            auth.setpostbody(props.body);
            auth.setpostname(props.title)
            auth.setpostername(props.author);
            auth.setlike(props.like);
          props.f.navigate("commentscreen");
+         
         }} />
       </View>
     </Card>
