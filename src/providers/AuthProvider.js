@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 
 const AuthContext = React.createContext();
+
+const useAuth = () =>{
+    return useContext(AuthContext);
+}
 
 const AuthProvider = (props) => {
   const [CurrentUser, setCurrentUser] = useState({});
@@ -10,7 +14,11 @@ const AuthProvider = (props) => {
   const[postername,setpostername] = useState("");
   const[postname,setpostname] = useState("");
   const[like,setlike] = useState();
-  
+
+
+  const provideclickedpostid = () =>{
+      return clickedpost;
+  }
   return (
     <AuthContext.Provider
       value={{
@@ -28,6 +36,7 @@ const AuthProvider = (props) => {
         setpostname:setpostname,
         like:like,
         setlike:setlike,
+          provideclickedpostid
       }}
     >
       {props.children}
@@ -35,4 +44,4 @@ const AuthProvider = (props) => {
   );
 };
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider,useAuth };

@@ -82,7 +82,10 @@ const PostCard = (props) => {
            auth.setpostname(props.title)
            auth.setpostername(props.author);
            auth.setlike(props.like);
-         props.f.navigate("commentscreen");
+       //   props.f.navigation.route["postid"] = props.id;
+         props.f.navigate("commentscreen",{postid:props.id});
+
+
          
         }} />
       </View>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useIsFocused } from '@react-navigation/native'
 import {
   ScrollView,
   View,
@@ -10,7 +11,7 @@ import { Card, Button, Text, Avatar, Input } from "react-native-elements";
 import PostCard from "./../components/PostCard";
 import HeaderHome from "../components/HeaderHome";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import { AuthContext } from "../providers/AuthProvider";
+import { AuthContext ,useAuth} from "../providers/AuthProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -25,17 +26,29 @@ const commentscreen = (props) => {
     const [comment,setcomment] =  useState("");
     const [commenter,setcommenter] =useState();
     const [allcomments,setallcomments] =useState([]);
+    const clickedpost = useAuth().provideclickedpostid();
+    const isfocused = useIsFocused();
 
-    const loadPosts = async () => {
-   
+    const loadcomments =  () =>{
+        let temp =[]
+        console.log(clickedpost);
+         firebase.firestore().collection("posts").doc(clickedpost).get().then((doc)=>{
+            temp = doc.data().comments;
+            temp= doc.data().comments;
+            setallcomments(temp);
+          //  temp.forEach(element => {
+            //    console.log(element);
+               // allcomments.push(element);
+           // })
+
+        })
     };
-  
 
-   {console.log(props);}
+
+
       useEffect(() => {
-        loadPosts();
-      // loadcomments();
-      }, []);
+       loadcomments();
+      }, [isfocused]);
  
 
       return (
@@ -79,7 +92,7 @@ const commentscreen = (props) => {
                 .collection("posts").doc(auth.clickedpost).get().then((doc)=>{
                  temp= doc.data().comments;
                  temp.forEach(element => {
-                   console.log(element);
+                  // console.log(element);
                    allcomments.push(element);
                  });
                  let object={comment:comment,commenter:auth.CurrentUser.displayName};
@@ -102,7 +115,6 @@ const commentscreen = (props) => {
             }
             />    
          </Card>
-        { console.log(allcomments)}
 
               <ActivityIndicator size="large" color="red" animating={loading} />
               <FlatList
